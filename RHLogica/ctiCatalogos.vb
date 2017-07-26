@@ -537,37 +537,43 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarPartidaJornada(ByVal idempleado As Integer, _
-                                   ByVal idjornada As Integer, _
+    Public Function agregarPartidaJornada(ByVal idempleado As Integer,
+                                   ByVal idjornada As Integer,
                                    ByVal fecha As String) As String()
-        Dim au() As String
+        Dim ans() As String
+        If fecha <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idpartidas_jornada FROM Partidas_Jornada WHERE idjornada = @idjornada AND idempleado= @idempleado ", dbC)
 
+            cmd.Parameters.AddWithValue("idjornada", idjornada)
+            cmd.Parameters.AddWithValue("idempleado", idempleado)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe el dato."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha"
 
-        Dim dbC As New SqlConnection(StarTconnStrRH)
-        dbC.Open()
-
-
-
-        
-        'rdr.Close()
-        Dim cmd As New SqlCommand("INSERT INTO Partidas_Jornada SELECT @idempleado, @idjornada, @fecha")
-                cmd.Parameters.AddWithValue("idempleado", idempleado)
-                cmd.Parameters.AddWithValue("idjornada", idjornada)
                 cmd.Parameters.AddWithValue("fecha", fecha)
-        cmd.ExecuteNonQuery()
-        Dim rdr As SqlDataReader = cmd.ExecuteReader
+
+                cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT idpartidas_jornada FROM Partidas_Jornada WHERE fecha = @fecha"
                 rdr = cmd.ExecuteReader
                 rdr.Read()
-                ReDim au(1)
-                au(0) = "Agregado."
-                au(1) = rdr("idusuario").ToString
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idpartidas_jornada").ToString
                 rdr.Close()
-          
-        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
-
-
-        Return au
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
     End Function
     Public Function actualizarUsuario(ByVal idpartidas_jornada As Integer, _
                                       ByVal idempleado As Integer, _
