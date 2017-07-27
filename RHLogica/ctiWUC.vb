@@ -140,7 +140,7 @@ Public Class ctiWUC
             cmd.Parameters.AddWithValue("idS", idSucursal)
         End If
 
-        cmd.CommandText = "SELECT idempleado, empleado FROM Empleados " & wre & " ORDER BY empleado"
+        cmd.CommandText = "SELECT idempleado, empleado FROM Empleados " & wre & " AND activo = 1 ORDER BY empleado"
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             lista.Add(rdr("empleado").ToString, rdr("idempleado").ToString)

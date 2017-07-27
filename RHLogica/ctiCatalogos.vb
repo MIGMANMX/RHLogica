@@ -627,21 +627,25 @@ Public Class ctiCatalogos
     Public Function gvPartida_Jornada(ByVal idempleado As Integer) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idempleado", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("idjornada", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("jornada", System.Type.GetType("System.String")))
 
+        dt.Columns.Add(New DataColumn("inicio", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fin", System.Type.GetType("System.String")))
+
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idempleado,idjornada,fecha FROM Partidas_Jornada WHERE idempleado=@idempleado ORDER BY fecha", dbC)
+        Dim cmd As New SqlCommand("SELECT jornada,inicio,fin,fecha FROM vw_AHorario WHERE idempleado=@idempleado ORDER BY fecha", dbC)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
-            r(0) = rdr("idempleado").ToString
-            r(1) = rdr("idjornada").ToString
-            r(2) = rdr("fecha").ToString
-            
+            r(1) = rdr("jornada").ToString
+            r(2) = rdr("inicio").ToString
+            r(3) = rdr("fin").ToString
+            r(4) = rdr("fecha").ToString
+
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
