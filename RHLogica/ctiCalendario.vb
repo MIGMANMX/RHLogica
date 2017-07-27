@@ -11,14 +11,12 @@ Public Class ctiCalendario
         Dim dsP As String()
         If rdr.Read Then
             ReDim dsP(6)
-            dsP(0) = rdr("fecha").ToString
+            dsP(0) = rdr("idempleado").ToString
             dsP(1) = rdr("jornada").ToString
             dsP(2) = rdr("inicio").ToString
             dsP(3) = rdr("fin").ToString
-            dsP(4) = rdr("idempleado").ToString
-            dsP(4) = rdr("idjornada").ToString
-
-            dsP(5) = rdr("idpartidas_jornada").ToString
+            dsP(4) = rdr("fecha").ToString
+            dsP(5) = rdr("color").ToString
         Else
             ReDim dsP(0) : dsP(0) = "Error: no se encuentra este Evento."
         End If
