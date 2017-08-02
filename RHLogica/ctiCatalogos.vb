@@ -130,6 +130,26 @@ Public Class ctiCatalogos
         End If
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
+
+    End Function
+
+    Public Function datosUsuarioV(ByVal idUsuario As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT  nivel, idsucursal FROM Usuarios WHERE idusuario = @idU", dbC)
+        cmd.Parameters.AddWithValue("idU", idUsuario)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(1)
+            dsP(0) = rdr("nivel").ToString
+            dsP(1) = rdr("idsucursal").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra este usuario."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+
     End Function
     Public Function agregarUsuario(ByVal nombre As String, _
                                    ByVal usuario As String, _
