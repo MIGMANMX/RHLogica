@@ -21,25 +21,4 @@ Public Class ctiAdmin
         'cmd2.Dispose()
         Return ci
     End Function
-
-    Public Function validar(ByVal idusuario As Integer) As String
-        'Dim ci As String = "0,,,,,"
-        'Dim dbC As New SqlConnection(StarTconnStr)
-        'dbC.Open()
-        'Dim fecha As Date = DateTime.Now
-        'Dim cmd As New SqlCommand("SELECT idusuario, nivel, idsucursal FROM Usuarios  WHERE idusuario=@idusuario", dbC)
-        'cmd.Parameters.AddWithValue("idusuario", idusuario)
-
-        'Dim rdr As SqlDataReader = cmd.ExecuteReader()
-        'If rdr.Read Then
-        '    ci = rdr("idusuario").ToString & "," & rdr("nivel").ToString & "," & rdr("idsucursal").ToString
-        '    rdr.Close()
-        'End If
-        'rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
-
-        'Return ci
-
-
-
-    End Function
 End Class

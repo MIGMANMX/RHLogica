@@ -132,7 +132,6 @@ Public Class ctiCatalogos
         Return dsP
 
     End Function
-
     Public Function datosUsuarioV(ByVal idUsuario As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
         dbC.Open()
