@@ -24,36 +24,36 @@ Public Class ctiCalendario
         Return dsP
     End Function
 
-    Public Function datosCalendarioE(ByVal idEmpleado As Integer) As String()
-        Dim schedule As New Hashtable
-        Using con As New SqlConnection(StarTconnStrRH)
-            Dim strSQL As String = "SELECT * FROM MostrarCalendario where idEmpleado = @idEmpleado"
-            Dim cmd As New SqlCommand(strSQL, con)
-            cmd.Parameters.AddWithValue("idEmpleado", idEmpleado)
-            'buscar todos los eventos de la base de datos
+    'Public Function datosCalendarioE(ByVal idEmpleado As Integer) As String()
+    '    Dim schedule As New Hashtable
+    '    Using con As New SqlConnection(StarTconnStrRH)
+    '        Dim strSQL As String = "SELECT * FROM MostrarCalendario where idEmpleado = @idEmpleado"
+    '        Dim cmd As New SqlCommand(strSQL, con)
+    '        cmd.Parameters.AddWithValue("idEmpleado", idEmpleado)
+    '        'buscar todos los eventos de la base de datos
 
-            'Dim cmd As New SqlCommand(strSQL, con)
-            Dim ds As SqlClient.SqlDataReader
+    '        'Dim cmd As New SqlCommand(strSQL, con)
+    '        Dim ds As SqlClient.SqlDataReader
 
-            con.Open()
-            ds = cmd.ExecuteReader()
-            While ds.Read
-                Try
-                    schedule(FormatDateTime(ds.GetDateTime(1),
-                                            DateFormat.ShortDate)) = ds.GetInt32(4) &
-                                    " evento/s "
-                Catch ex As Exception
+    '        con.Open()
+    '        ds = cmd.ExecuteReader()
+    '        While ds.Read
+    '            Try
+    '                schedule(FormatDateTime(ds.GetDateTime(1),
+    '                                        DateFormat.ShortDate)) = ds.GetInt32(4) &
+    '                                " evento/s "
+    '            Catch ex As Exception
 
-                End Try
-            End While
+    '            End Try
+    '        End While
 
-            ds = Nothing
-            cmd = Nothing
-            con.Close()
-        End Using
+    '        ds = Nothing
+    '        cmd = Nothing
+    '        con.Close()
+    '    End Using
 
-        Return schedule
-    End Function
+    '    Return schedule
+    'End Function
 
     'Jornada
     Public Function datosJornada(ByVal idjornada As Integer) As String()
