@@ -659,5 +659,23 @@ Public Class ctiCatalogos
         End If
         Return aci
     End Function
+    Public Function datosPJ(ByVal idempleado As Integer, ByVal fecha As String) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,idjornada FROM Partidas_Jornada WHERE idempleado = @idempleado AND fecha = @fecha", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        cmd.Parameters.AddWithValue("fecha", fecha)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("idpartidas_jornada").ToString
+            dsP(1) = rdr("idjornada").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
 End Class
 
