@@ -564,22 +564,29 @@ Public Class ctiCatalogos
         If fecha <> "" Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
-            Dim cmd As New SqlCommand("SELECT idpartidas_jornada FROM Partidas_Jornada WHERE idjornada = @idjornada", dbC)
-            cmd.Parameters.AddWithValue("idjornada", idjornada)
-            Dim rdr As SqlDataReader = cmd.ExecuteReader
-            rdr.Close()
-            cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha"
-            cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
-            cmd.Parameters.AddWithValue("idempleado", idempleado)
-            cmd.ExecuteNonQuery()
-            cmd.CommandText = "SELECT idpartidas_jornada FROM Partidas_Jornada WHERE fecha = @fecha"
-            rdr = cmd.ExecuteReader
-            rdr.Read()
-            ReDim ans(1)
-            ans(0) = "Agregado."
-            ans(1) = rdr("idpartidas_jornada").ToString
-            rdr.Close()
 
+            Dim cmd As New SqlCommand("SELECT fecha FROM Partidas_Jornada WHERE fecha = @fecha", dbC)
+            cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
+
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe un registro."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha"
+                cmd.Parameters.AddWithValue("idjornada", idjornada)
+                cmd.Parameters.AddWithValue("idempleado", idempleado)
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idpartidas_jornada FROM Partidas_Jornada WHERE fecha = @fecha"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idpartidas_jornada").ToString
+                rdr.Close()
+            End If
             rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Else
             ReDim ans(0)
