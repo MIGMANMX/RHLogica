@@ -565,9 +565,9 @@ Public Class ctiCatalogos
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
 
-            Dim cmd As New SqlCommand("SELECT fecha FROM Partidas_Jornada WHERE fecha = @fecha", dbC)
+            Dim cmd As New SqlCommand("SELECT fecha FROM Partidas_Jornada WHERE fecha = @fecha And idempleado = @idempleado", dbC)
             cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
-
+            cmd.Parameters.AddWithValue("idempleado", idempleado)
             Dim rdr As SqlDataReader = cmd.ExecuteReader
             If rdr.HasRows Then
                 ReDim ans(0)
@@ -577,7 +577,7 @@ Public Class ctiCatalogos
                 rdr.Close()
                 cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha"
                 cmd.Parameters.AddWithValue("idjornada", idjornada)
-                cmd.Parameters.AddWithValue("idempleado", idempleado)
+                'cmd.Parameters.AddWithValue("idempleado", idempleado)
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT idpartidas_jornada FROM Partidas_Jornada WHERE fecha = @fecha"
                 rdr = cmd.ExecuteReader
