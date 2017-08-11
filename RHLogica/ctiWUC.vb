@@ -340,7 +340,6 @@ Public Class ctiWUC
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return lista
     End Function
-
     Public Function wucSemiprocesados() As SortedList
         Dim lista As New SortedList
         Dim dbC As New SqlConnection(StarTconnStr)
@@ -354,6 +353,18 @@ Public Class ctiWUC
         Return lista
     End Function
     Public Function wucSucursales() As SortedList
+        Dim lista As New SortedList
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idsucursal, sucursal FROM Sucursales ORDER BY sucursal", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            lista.Add(rdr("sucursal").ToString, rdr("idsucursal").ToString)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return lista
+    End Function
+    Public Function wucSuc() As SortedList
         Dim lista As New SortedList
         Dim dbC As New SqlConnection(StarTconnStr)
         dbC.Open()
@@ -389,7 +400,6 @@ Public Class ctiWUC
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return lista
     End Function
-
     Public Function ctrlIncidencias() As String
         Dim lista As String = "<option value='0' selected='selected'>Seleccionar...</option>"
         Dim dbC As New SqlConnection(StarTconnStr)

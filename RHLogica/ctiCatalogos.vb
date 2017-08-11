@@ -174,7 +174,7 @@ Public Class ctiCatalogos
                         rdr.Close()
                     Else
                         rdr.Close()
-                        cmd.CommandText = "INSERT INTO Usuarios SELECT @nombre, @usuario, @clave, @nivel, @ids"
+                        cmd.CommandText = "INSERT INTO Usuarios values @nombre, @usuario, @clave, @nivel, @ids"
                         cmd.Parameters.AddWithValue("nombre", nombre)
                         cmd.Parameters.AddWithValue("clave", clave)
                         cmd.Parameters.AddWithValue("nivel", nivel)
@@ -316,32 +316,31 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarEmpleado(ByVal nombre As String, _
-                                    ByVal idSucursal As Integer, _
-                                    ByVal idpuesto As String, _
-                                    ByVal activo As Boolean, _
-                                    ByVal nss As String, _
-                                    ByVal fecha_ingreso As String, _
-                                    ByVal rfc As String, _
-                                    ByVal fecha_nacimiento As String, _
-                                    ByVal calle As String, _
-                                    ByVal numero As String, _
-                                    ByVal colonia As String, _
-                                    ByVal cp As Integer, _
-                                    ByVal telefono As String, _
-                                    ByVal correo As String, _
-                                    ByVal fecha_baja As String) As String()
+    Public Function agregarEmpleado(ByVal empleado As String,
+                                    ByVal idsucursal As Integer,
+                                    ByVal idpuesto As Integer,
+                                    ByVal activo As Boolean,
+                                    ByVal nss As String,
+                                    ByVal fecha_ingreso As String,
+                                    ByVal rfc As String,
+                                    ByVal fecha_nacimiento As String,
+                                    ByVal calle As String,
+                                    ByVal numero As String,
+                                    ByVal colonia As String,
+                                    ByVal cp As Integer,
+                                    ByVal telefono As String,
+                                    ByVal correo As String) As String()
         Dim ae() As String
-        If nombre <> "" Then
+        If empleado <> "" Then
             Dim dbC As New SqlConnection(StarTconnStr)
             dbC.Open()
-            Dim cmd As New SqlCommand("SELECT sucursal FROM Sucursales WHERE idsucursal = @idS", dbC)
-            cmd.Parameters.AddWithValue("idS", idSucursal)
+            Dim cmd As New SqlCommand("SELECT sucursal FROM Sucursales WHERE idsucursal = @idsucursal", dbC)
+            cmd.Parameters.AddWithValue("idsucursal", idsucursal)
             Dim rdr As SqlDataReader = cmd.ExecuteReader
             If rdr.HasRows Then
                 rdr.Close()
-                cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @nombre"
-                cmd.Parameters.AddWithValue("nombre", nombre)
+                cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @empleado"
+                cmd.Parameters.AddWithValue("empleado", empleado)
                 rdr = cmd.ExecuteReader
                 If rdr.HasRows Then
                     ReDim ae(0)
@@ -349,22 +348,28 @@ Public Class ctiCatalogos
                     rdr.Close()
                 Else
                     rdr.Close()
-                    cmd.CommandText = "INSERT INTO Empleados SELECT @nombre, @idS, @idpuesto, @activo , @nss, @fecha_ingreso, @rfc, @fecha_nacimiento, @calle, @numero, @colonia, @cp, @telefono, @correo, @fecha_baja"
+                    'cmd.CommandText = "INSERT INTO Empleados SELECT @empleado, @idsucursal, @activo , @nss, @fecha_ingreso, @rfc, @fecha_nacimiento, @calle, @numero, @colonia, @cp, @telefono, @correo, @fecha_baja, @idpuesto"
+
+                    cmd.CommandText = "INSERT INTO Empleados SELECT empleado = @empleado, idsucursal = @idsucursal, idpuesto = @idpuesto, activo = @activo ,nss = @nss, fecha_ingreso = @fecha_ingreso, rfc = @rfc, fecha_nacimiento =  @fecha_nacimiento, calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo"
                     cmd.Parameters.AddWithValue("idpuesto", idpuesto)
                     cmd.Parameters.AddWithValue("activo", activo)
+
+                    'Convert.ToDateTime()
+
                     cmd.Parameters.AddWithValue("nss", nss)
-                    cmd.Parameters.AddWithValue("fecha_ingreso", fecha_ingreso)
+                    cmd.Parameters.AddWithValue("fecha_ingreso", Convert.ToDateTime(fecha_ingreso))
                     cmd.Parameters.AddWithValue("rfc", rfc)
-                    cmd.Parameters.AddWithValue("fecha_nacimiento", fecha_nacimiento)
+                    cmd.Parameters.AddWithValue("fecha_nacimiento", Convert.ToDateTime(fecha_nacimiento))
                     cmd.Parameters.AddWithValue("calle", calle)
                     cmd.Parameters.AddWithValue("numero", numero)
                     cmd.Parameters.AddWithValue("colonia", colonia)
                     cmd.Parameters.AddWithValue("cp", cp)
                     cmd.Parameters.AddWithValue("telefono", telefono)
                     cmd.Parameters.AddWithValue("correo", correo)
-                    cmd.Parameters.AddWithValue("fecha_baja", fecha_baja)
+
+
                     cmd.ExecuteNonQuery()
-                    cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @nombre"
+                    cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @empleado"
                     rdr = cmd.ExecuteReader
                     rdr.Read()
                     ReDim ae(1)
