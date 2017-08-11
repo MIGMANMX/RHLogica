@@ -316,22 +316,99 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarEmpleado(ByVal empleado As String,
-                                    ByVal idsucursal As Integer,
-                                    ByVal idpuesto As Integer,
-                                    ByVal activo As Boolean,
-                                    ByVal nss As String,
-                                    ByVal fecha_ingreso As String,
-                                    ByVal rfc As String,
-                                    ByVal fecha_nacimiento As String,
-                                    ByVal calle As String,
-                                    ByVal numero As String,
-                                    ByVal colonia As String,
-                                    ByVal cp As Integer,
-                                    ByVal telefono As String,
-                                    ByVal correo As String) As String()
-        Dim ae() As String
-        If empleado <> "" Then
+
+    'Public Function agregarEmpleado(ByVal empleado As String,
+    '                                ByVal idsucursal As Integer,
+    '                                ByVal idpuesto As Integer,
+    '                                ByVal activo As Boolean,
+    '                                ByVal nss As String,
+    '                                ByVal fecha_ingreso As String,
+    '                                ByVal rfc As String,
+    '                                ByVal fecha_nacimiento As String,
+    '                                ByVal calle As String,
+    '                                ByVal numero As String,
+    '                                ByVal colonia As String,
+    '                                ByVal cp As Integer,
+    '                                ByVal telefono As String,
+    '                                ByVal correo As String) As String()
+    '    Dim ae() As String
+    '    If empleado <> "" Then
+    '        Dim dbC As New SqlConnection(StarTconnStr)
+    '        dbC.Open()
+    '        Dim cmd As New SqlCommand("SELECT sucursal FROM Sucursales WHERE idsucursal = @idsucursal", dbC)
+    '        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+    '        Dim rdr As SqlDataReader = cmd.ExecuteReader
+    '        If rdr.HasRows Then
+    '            rdr.Close()
+    '            cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @empleado"
+    '            cmd.Parameters.AddWithValue("empleado", empleado)
+    '            rdr = cmd.ExecuteReader
+    '            If rdr.HasRows Then
+    '                ReDim ae(0)
+    '                ae(0) = "Error: no se puede agregar, ya existe este empleado."
+    '                rdr.Close()
+    '            Else
+    '                rdr.Close()
+    '                'cmd.CommandText = "INSERT INTO Empleados SELECT @empleado, @idsucursal, @activo , @nss, @fecha_ingreso, @rfc, @fecha_nacimiento, @calle, @numero, @colonia, @cp, @telefono, @correo, @fecha_baja, @idpuesto"
+
+    '                cmd.CommandText = "INSERT INTO Empleados SELECT empleado = @empleado, idsucursal = @idsucursal, idpuesto = @idpuesto, activo = @activo ,nss = @nss, fecha_ingreso = @fecha_ingreso, rfc = @rfc, fecha_nacimiento =  @fecha_nacimiento, calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo"
+    '                cmd.Parameters.AddWithValue("idpuesto", idpuesto)
+    '                cmd.Parameters.AddWithValue("activo", activo)
+
+    '                'Convert.ToDateTime()
+
+    '                cmd.Parameters.AddWithValue("nss", nss)
+    '                cmd.Parameters.AddWithValue("fecha_ingreso", Convert.ToDateTime(fecha_ingreso))
+    '                cmd.Parameters.AddWithValue("rfc", rfc)
+    '                cmd.Parameters.AddWithValue("fecha_nacimiento", Convert.ToDateTime(fecha_nacimiento))
+    '                cmd.Parameters.AddWithValue("calle", calle)
+    '                cmd.Parameters.AddWithValue("numero", numero)
+    '                cmd.Parameters.AddWithValue("colonia", colonia)
+    '                cmd.Parameters.AddWithValue("cp", cp)
+    '                cmd.Parameters.AddWithValue("telefono", telefono)
+    '                cmd.Parameters.AddWithValue("correo", correo)
+
+
+    '                cmd.ExecuteNonQuery()
+    '                cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @empleado"
+    '                rdr = cmd.ExecuteReader
+    '                rdr.Read()
+    '                ReDim ae(1)
+    '                ae(0) = "Empleado agregado."
+    '                ae(1) = rdr("idempleado").ToString
+    '                rdr.Close()
+    '            End If
+    '        Else
+    '            ReDim ae(0)
+    '            ae(0) = "Error: no se puede agregar, es necesario seleccionar la sucursal."
+    '            rdr.Close()
+    '        End If
+    '        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+    '    Else
+    '        ReDim ae(0)
+    '        ae(0) = "Error: no se puede agregar, es necesario capturar el nombre del empleado."
+    '    End If
+    '    Return ae
+    'End Function
+
+
+    Public Function agregarEmp(ByVal empleado As String,
+                                   ByVal idsucursal As Integer,
+                                   ByVal activo As Boolean,
+                                   ByVal nss As String,
+                                   ByVal fecha_ingreso As String,
+                                   ByVal rfc As String,
+                                   ByVal fecha_nacimiento As String,
+                                   ByVal calle As String,
+                                   ByVal numero As String,
+                                   ByVal colonia As String,
+                                   ByVal cp As Integer,
+                                   ByVal telefono As String,
+                                   ByVal correo As String,
+                                   ByVal idpuesto As Integer) As String()
+        Dim au() As String
+        If empleado <> "" And rfc <> "" And telefono <> "" Then
+
             Dim dbC As New SqlConnection(StarTconnStr)
             dbC.Open()
             Dim cmd As New SqlCommand("SELECT sucursal FROM Sucursales WHERE idsucursal = @idsucursal", dbC)
@@ -343,67 +420,65 @@ Public Class ctiCatalogos
                 cmd.Parameters.AddWithValue("empleado", empleado)
                 rdr = cmd.ExecuteReader
                 If rdr.HasRows Then
-                    ReDim ae(0)
-                    ae(0) = "Error: no se puede agregar, ya existe este empleado."
+                    ReDim au(0)
+                    au(0) = "Error: no se puede agregar, ya existe este empleado."
                     rdr.Close()
                 Else
                     rdr.Close()
-                    'cmd.CommandText = "INSERT INTO Empleados SELECT @empleado, @idsucursal, @activo , @nss, @fecha_ingreso, @rfc, @fecha_nacimiento, @calle, @numero, @colonia, @cp, @telefono, @correo, @fecha_baja, @idpuesto"
-
-                    cmd.CommandText = "INSERT INTO Empleados SELECT empleado = @empleado, idsucursal = @idsucursal, idpuesto = @idpuesto, activo = @activo ,nss = @nss, fecha_ingreso = @fecha_ingreso, rfc = @rfc, fecha_nacimiento =  @fecha_nacimiento, calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo"
-                    cmd.Parameters.AddWithValue("idpuesto", idpuesto)
-                    cmd.Parameters.AddWithValue("activo", activo)
-
-                    'Convert.ToDateTime()
-
+                    cmd.CommandText = "INSERT INTO Empleados SELECT @empleado, @idsucursal, @nss, @fecha_ingreso, @rfc, @fecha_nacimiento, @calle, @numero, @colonia, @cp, @telefono, @correo, @idpuesto"
+                    'cmd.Parameters.AddWithValue("activo", 1)
                     cmd.Parameters.AddWithValue("nss", nss)
                     cmd.Parameters.AddWithValue("fecha_ingreso", Convert.ToDateTime(fecha_ingreso))
+
                     cmd.Parameters.AddWithValue("rfc", rfc)
                     cmd.Parameters.AddWithValue("fecha_nacimiento", Convert.ToDateTime(fecha_nacimiento))
                     cmd.Parameters.AddWithValue("calle", calle)
+
                     cmd.Parameters.AddWithValue("numero", numero)
                     cmd.Parameters.AddWithValue("colonia", colonia)
                     cmd.Parameters.AddWithValue("cp", cp)
+
                     cmd.Parameters.AddWithValue("telefono", telefono)
                     cmd.Parameters.AddWithValue("correo", correo)
-
-
+                    cmd.Parameters.AddWithValue("idpuesto", idpuesto)
                     cmd.ExecuteNonQuery()
                     cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @empleado"
                     rdr = cmd.ExecuteReader
                     rdr.Read()
-                    ReDim ae(1)
-                    ae(0) = "Empleado agregado."
-                    ae(1) = rdr("idempleado").ToString
+                    ReDim au(1)
+                    au(0) = "Empleado agregado."
+                    au(1) = rdr("idempleado").ToString
                     rdr.Close()
                 End If
             Else
-                ReDim ae(0)
-                ae(0) = "Error: no se puede agregar, es necesario seleccionar la sucursal."
+                ReDim au(0)
+                au(0) = "Error: no se puede agregar, es necesario seleccionar la sucursal."
                 rdr.Close()
             End If
             rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
         Else
-            ReDim ae(0)
-            ae(0) = "Error: no se puede agregar, es necesario capturar el nombre del empleado."
+            ReDim au(0)
+            au(0) = "Error: no se puede agregar, es necesario capturar."
         End If
-        Return ae
+        Return au
     End Function
-    Public Function actualizarEmpleado(ByVal idEmpleado As Integer, _
-                                       ByVal nombre As String, _
-                                       ByVal idSucursal As Integer, _
-                                       ByVal idpuesto As String, _
-                                       ByVal activo As Boolean, _
-                                       ByVal nss As String, _
-                                        ByVal fecha_ingreso As String, _
-                                        ByVal rfc As String, _
-                                        ByVal fecha_nacimiento As String, _
-                                        ByVal calle As String, _
-                                        ByVal numero As String, _
-                                        ByVal colonia As String, _
-                                        ByVal cp As Integer, _
-                                        ByVal telefono As String, _
-                                        ByVal correo As String, _
+
+    Public Function actualizarEmpleado(ByVal idEmpleado As Integer,
+                                       ByVal nombre As String,
+                                       ByVal idSucursal As Integer,
+                                       ByVal idpuesto As String,
+                                       ByVal activo As Boolean,
+                                       ByVal nss As String,
+                                        ByVal fecha_ingreso As String,
+                                        ByVal rfc As String,
+                                        ByVal fecha_nacimiento As String,
+                                        ByVal calle As String,
+                                        ByVal numero As String,
+                                        ByVal colonia As String,
+                                        ByVal cp As Integer,
+                                        ByVal telefono As String,
+                                        ByVal correo As String,
                                         ByVal fecha_baja As String) As String
         Dim aci As String
         If nombre <> "" Then
