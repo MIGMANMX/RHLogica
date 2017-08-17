@@ -316,8 +316,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-
-
     Public Function agregarEmpleado(ByVal empleado As String,
                                     ByVal idsucursal As Integer,
                                     ByVal activo As Boolean,
@@ -377,7 +375,54 @@ Public Class ctiCatalogos
         End If
         Return ae
     End Function
+    Public Function actualizarDirectorio(ByVal idEmpleado As Integer,
+                                       ByVal nombre As String,
+                                       ByVal idSucursal As Integer,
+                                        ByVal calle As String,
+                                        ByVal numero As String,
+                                        ByVal colonia As String,
+                                        ByVal cp As Integer,
+                                        ByVal telefono As String,
+                                        ByVal correo As String) As String
+        Dim aci As String
+        If nombre <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT sucursal FROM Sucursales WHERE idsucursal = @idS", dbC)
+            cmd.Parameters.AddWithValue("idS", idSucursal)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                cmd.CommandText = "SELECT idempleado FROM Empleados WHERE empleado = @nombre AND idempleado <> @idE"
+                cmd.Parameters.AddWithValue("nombre", nombre)
+                cmd.Parameters.AddWithValue("idE", idEmpleado)
+                rdr = cmd.ExecuteReader
+                If rdr.HasRows Then
+                    aci = "Error: no se actualizó, ya existe este empleado."
+                    rdr.Close()
+                Else
+                    rdr.Close()
+                    cmd.CommandText = "UPDATE Empleados SET calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo WHERE idempleado = @idE"
+                    cmd.Parameters.AddWithValue("calle", calle)
+                    cmd.Parameters.AddWithValue("numero", numero)
+                    cmd.Parameters.AddWithValue("colonia", colonia)
+                    cmd.Parameters.AddWithValue("cp", cp)
+                    cmd.Parameters.AddWithValue("telefono", telefono)
+                    cmd.Parameters.AddWithValue("correo", correo)
 
+                    cmd.ExecuteNonQuery()
+                    aci = "Datos del empleado actualizados."
+                End If
+            Else
+                aci = "Error: no se actualizó, es necesario seleccionar la sucursal."
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            aci = "Error: no se actualizó, es necesario capturar el nombre del empleado."
+        End If
+        Return aci
+    End Function
     Public Function actualizarEmpleado(ByVal idEmpleado As Integer,
                                        ByVal nombre As String,
                                        ByVal idSucursal As Integer,
