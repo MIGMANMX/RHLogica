@@ -110,6 +110,117 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
+
+    '''''Incidencias
+    Public Function datosIncidencias(ByVal idincidencia As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idincidencia, incidencia, descripcion FROM Incidencia WHERE idincidencia = @idincidencia", dbC)
+        cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("incidencia").ToString
+            dsP(1) = rdr("descripcion").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra ."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarIncidencia(ByVal incidencia As String, ByVal descripcion As String) As String()
+        Dim ans() As String
+        If incidencia <> "" And descripcion <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idincidencia FROM Incidencia WHERE incidencia = @incidencia", dbC)
+            cmd.Parameters.AddWithValue("incidencia", incidencia)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe registro con este nombre."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "INSERT INTO Incidencia SELECT @incidencia, @descripcion"
+                cmd.Parameters.AddWithValue("descripcion", descripcion)
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idincidencia FROM Incidencia WHERE incidencia = @incidencia"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Incidencia agregada."
+                ans(1) = rdr("idincidencia").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarIncidencia(ByVal idincidencia As Integer,
+                                     ByVal incidencia As String, ByVal descripcion As String) As String
+        Dim err As String
+        If incidencia = "" And descripcion = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idincidencia FROM Incidencia WHERE incidencia = @incidencia AND idincidencia <> @idincidencia", dbC)
+            cmd.Parameters.AddWithValue("incidencia", incidencia)
+            cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+            cmd.Parameters.AddWithValue("descripcion", descripcion)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Incidencia SET incidencia = @incidencia, descripcion = @descripcion  WHERE idincidencia = @idincidencia"
+                cmd.ExecuteNonQuery()
+                err = "Datos de incidencia actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarIncidencia(ByVal idincidencia As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idincidencia FROM Incidencia WHERE idincidencia = @idincidencia", dbC)
+        cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim err As String
+
+        rdr.Close()
+            cmd.CommandText = "DELETE FROM Incidencia WHERE idincidencia = @idincidencia"
+            cmd.ExecuteNonQuery()
+            err = "Incidencia eliminado."
+
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return err
+    End Function
+    Public Function gvIncidencia() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idincidencia", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("descripcion", System.Type.GetType("System.String")))
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idincidencia, incidencia, descripcion FROM Incidencia", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idincidencia").ToString : r(1) = rdr("incidencia").ToString : r(2) = rdr("descripcion")
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
     ''''''''''Usuarios
     Public Function datosUsuario(ByVal idUsuario As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
