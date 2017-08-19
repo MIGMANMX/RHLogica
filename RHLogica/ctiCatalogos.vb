@@ -624,18 +624,6 @@ Public Class ctiCatalogos
         dt.Columns.Add(New DataColumn("puesto", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("activo", System.Type.GetType("System.Boolean")))
 
-        dt.Columns.Add(New DataColumn("nss", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("fecha_ingreso", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("rfc", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("fecha_nacimiento", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("calle", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("numero", System.Type.GetType("System.String")))
-
-        dt.Columns.Add(New DataColumn("colonia", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("cp", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("telefono", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("correo", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("fecha_baja", System.Type.GetType("System.String")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStr)
         dbC.Open()
@@ -650,17 +638,17 @@ Public Class ctiCatalogos
             r(2) = rdr("puesto").ToString
             r(3) = rdr("activo").ToString
 
-            r(4) = rdr("nss").ToString
-            r(5) = rdr("fecha_ingreso").ToString
-            r(6) = rdr("rfc").ToString
-            r(7) = rdr("fecha_nacimiento").ToString
-            r(8) = rdr("calle").ToString
-            r(9) = rdr("numero").ToString
-            r(10) = rdr("colonia").ToString
-            r(11) = rdr("cp").ToString
-            r(12) = rdr("telefono").ToString
-            r(12) = rdr("correo").ToString
-            r(13) = rdr("fecha_baja").ToString
+            'r(4) = rdr("nss").ToString
+            'r(5) = rdr("fecha_ingreso").ToString
+            'r(6) = rdr("rfc").ToString
+            'r(7) = rdr("fecha_nacimiento").ToString
+            'r(8) = rdr("calle").ToString
+            'r(9) = rdr("numero").ToString
+            'r(10) = rdr("colonia").ToString
+            'r(11) = rdr("cp").ToString
+            'r(12) = rdr("telefono").ToString
+            'r(12) = rdr("correo").ToString
+            'r(13) = rdr("fecha_baja").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
