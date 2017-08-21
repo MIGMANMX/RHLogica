@@ -221,6 +221,126 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
+
+    '''''AsignarIncidencias
+    Public Function datosAsigIncidencias(ByVal iddetalle_incidencia As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, idincidencia, idempleado, fecha, observaciones  FROM Detalle_incidencias WHERE iddetalle_incidencia = @iddetalle_incidencia", dbC)
+        cmd.Parameters.AddWithValue("iddetalle_incidencia", iddetalle_incidencia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(5)
+            dsP(0) = rdr("iddetalle_incidencia").ToString
+            dsP(1) = rdr("idincidencia").ToString
+            dsP(2) = rdr("idempleado").ToString
+            dsP(3) = rdr("fecha").ToString
+            dsP(4) = rdr("observaciones").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra ."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarAsigIncidencias(ByVal idincidencia As Integer, ByVal idempleado As Integer, ByVal fecha As String, ByVal observaciones As String) As String()
+        Dim ans() As String
+        If fecha <> "" And observaciones <> "" And idincidencia <> 0 And idempleado <> 0 Then
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idincidencia FROM Detalle_incidencias WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
+            cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+            cmd.Parameters.AddWithValue("idempleado", idempleado)
+            cmd.Parameters.AddWithValue("fecha", fecha)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe registro a este nombre."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "INSERT INTO Detalle_incidencias SELECT @idincidencia, @idempleado,@fecha, @observaciones"
+                cmd.Parameters.AddWithValue("observaciones", observaciones)
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT iddetalle_incidencia FROM Detalle_incidencias WHERE idempleado = @idempleado and fecha = @fecha"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Incidencia agregada."
+                ans(1) = rdr("iddetalle_incidencia").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarAsigIncidencias(ByVal iddetalle_incidencia As Integer, ByVal idincidencia As Integer, ByVal idempleado As Integer, ByVal fecha As String, ByVal observaciones As String) As String
+        Dim err As String
+        'If fecha <> "" And observaciones <> "" Then
+        '    err = "Error: no se actualizó, es necesario capturar."
+        'Else
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT iddetalle_incidencia FROM Detalle_incidencias  WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
+            cmd.Parameters.AddWithValue("iddetalle_incidencia", iddetalle_incidencia)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+        cmd.Parameters.AddWithValue("observaciones", observaciones)
+        cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+
+        rdr.Close()
+                cmd.CommandText = "UPDATE Detalle_incidencias SET idincidencia = @idincidencia, idempleado = @idempleado, fecha = @fecha, observaciones = @observaciones  WHERE iddetalle_incidencia = @iddetalle_incidencia"
+                cmd.ExecuteNonQuery()
+                err = "Datos de incidencia actualizados."
+
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        'End If
+        Return err
+    End Function
+    Public Function eliminarAsigIncidencias(ByVal iddetalle_incidencia As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia FROM Detalle_incidencias WHERE iddetalle_incidencia = @iddetalle_incidencia", dbC)
+        cmd.Parameters.AddWithValue("iddetalle_incidencia", iddetalle_incidencia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim err As String
+
+        rdr.Close()
+        cmd.CommandText = "DELETE FROM Detalle_incidencias WHERE iddetalle_incidencia = @iddetalle_incidencia"
+        cmd.ExecuteNonQuery()
+        err = "Incidencia eliminado."
+
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return err
+    End Function
+    Public Function gvAsigIncidencias(ByVal idempleado As Integer) As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("iddetalle_incidencia", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("idincidencia", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("idempleado", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, idincidencia, idempleado, fecha, observaciones  FROM Detalle_incidencias where idempleado = @idempleado", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("iddetalle_incidencia").ToString : r(1) = rdr("idincidencia").ToString : r(2) = rdr("idempleado").ToString : r(3) = rdr("fecha").ToString : r(4) = rdr("observaciones").ToString
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
+
+
     ''''''''''Usuarios
     Public Function datosUsuario(ByVal idUsuario As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)

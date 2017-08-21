@@ -198,9 +198,9 @@ Public Class ctiWUC
     End Function
     Public Function wucIncidencias() As SortedList
         Dim lista As New SortedList
-        Dim dbC As New SqlConnection(StarTconnStr)
+        Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idincidencia, incidencia FROM Incidencias ORDER BY incidencia", dbC)
+        Dim cmd As New SqlCommand("SELECT idincidencia, incidencia FROM Incidencia ORDER BY incidencia", dbC)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             lista.Add(rdr("incidencia").ToString, rdr("idincidencia").ToString)
