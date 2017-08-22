@@ -548,6 +548,25 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
+
+    Public Function clave_att() As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("Select top 1 clave_att from Empleados order by idempleado desc", dbC)
+        'cmd.Parameters.AddWithValue("idE", idEmpleado)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(1)
+
+            dsP(0) = rdr("clave_att").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
     Public Function agregarEmpleado(ByVal empleado As String,
                                     ByVal idsucursal As Integer,
                                     ByVal activo As Boolean,
