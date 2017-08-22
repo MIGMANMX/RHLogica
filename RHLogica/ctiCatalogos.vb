@@ -251,7 +251,7 @@ Public Class ctiCatalogos
             Dim cmd As New SqlCommand("SELECT idincidencia FROM Detalle_incidencias WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
             cmd.Parameters.AddWithValue("idincidencia", idincidencia)
             cmd.Parameters.AddWithValue("idempleado", idempleado)
-            cmd.Parameters.AddWithValue("fecha", fecha)
+            cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
             Dim rdr As SqlDataReader = cmd.ExecuteReader
             If rdr.HasRows Then
                 ReDim ans(0)
@@ -321,19 +321,19 @@ Public Class ctiCatalogos
     Public Function gvAsigIncidencias(ByVal idempleado As Integer) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("iddetalle_incidencia", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("idincidencia", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("idempleado", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, idincidencia, idempleado, fecha, observaciones  FROM Detalle_incidencias where idempleado = @idempleado", dbC)
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, incidencia, empleado, fecha, observaciones  FROM vm_AsignarIncidencia where idempleado = @idempleado", dbC)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
-            r(0) = rdr("iddetalle_incidencia").ToString : r(1) = rdr("idincidencia").ToString : r(2) = rdr("idempleado").ToString : r(3) = rdr("fecha").ToString : r(4) = rdr("observaciones").ToString
+            r(0) = rdr("iddetalle_incidencia").ToString : r(1) = rdr("incidencia").ToString : r(2) = rdr("empleado").ToString : r(3) = rdr("fecha").ToString : r(4) = rdr("observaciones").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
