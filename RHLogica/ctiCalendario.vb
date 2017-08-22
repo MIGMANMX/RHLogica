@@ -24,38 +24,7 @@ Public Class ctiCalendario
         Return dsP
     End Function
 
-    'Public Function datosCalendarioE(ByVal idEmpleado As Integer) As String()
-    '    Dim schedule As New Hashtable
-    '    Using con As New SqlConnection(StarTconnStrRH)
-    '        Dim strSQL As String = "SELECT * FROM MostrarCalendario where idEmpleado = @idEmpleado"
-    '        Dim cmd As New SqlCommand(strSQL, con)
-    '        cmd.Parameters.AddWithValue("idEmpleado", idEmpleado)
-    '        'buscar todos los eventos de la base de datos
-
-    '        'Dim cmd As New SqlCommand(strSQL, con)
-    '        Dim ds As SqlClient.SqlDataReader
-
-    '        con.Open()
-    '        ds = cmd.ExecuteReader()
-    '        While ds.Read
-    '            Try
-    '                schedule(FormatDateTime(ds.GetDateTime(1),
-    '                                        DateFormat.ShortDate)) = ds.GetInt32(4) &
-    '                                " evento/s "
-    '            Catch ex As Exception
-
-    '            End Try
-    '        End While
-
-    '        ds = Nothing
-    '        cmd = Nothing
-    '        con.Close()
-    '    End Using
-
-    '    Return schedule
-    'End Function
-
-    'Jornada
+    '''''Jornada
     Public Function datosJornada(ByVal idjornada As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
@@ -64,12 +33,13 @@ Public Class ctiCalendario
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(5)
+            ReDim dsP(6)
             dsP(0) = rdr("idjornada").ToString
             dsP(1) = rdr("jornada").ToString
             dsP(2) = rdr("inicio").ToString
             dsP(3) = rdr("fin").ToString
             dsP(4) = rdr("color").ToString
+            dsP(5) = rdr("id_att").ToString
         Else
             ReDim dsP(1) : dsP(1) = "Error: no se encuentra esta jornada."
         End If
@@ -92,7 +62,7 @@ Public Class ctiCalendario
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarJornada(ByVal jornada As String, ByVal inicio As String, ByVal fin As String, ByVal color As String) As String()
+    Public Function agregarJornada(ByVal jornada As String, ByVal inicio As String, ByVal fin As String, ByVal color As String, ByRef id_att As Integer) As String()
         Dim ans() As String
         If jornada <> "" Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -106,12 +76,13 @@ Public Class ctiCalendario
                 rdr.Close()
             Else
                 rdr.Close()
-                cmd.CommandText = "INSERT INTO Jornada SELECT @jornada,@inicio,@fin,@color"
+                cmd.CommandText = "INSERT INTO Jornada SELECT @jornada,@inicio,@fin,@color,@id_att"
 
                 'cmd.Parameters.AddWithValue("jornada", jornada)
                 cmd.Parameters.AddWithValue("inicio", inicio)
                 cmd.Parameters.AddWithValue("fin", fin)
                 cmd.Parameters.AddWithValue("color", color)
+                cmd.Parameters.AddWithValue("id_att", id_att)
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT idjornada FROM Jornada WHERE jornada = @jornada"
                 rdr = cmd.ExecuteReader
@@ -128,7 +99,7 @@ Public Class ctiCalendario
         End If
         Return ans
     End Function
-    Public Function actualizarJornada(ByVal idjornada As Integer, ByVal jornada As String, ByVal inicio As String, ByVal fin As String, ByVal color As String) As String
+    Public Function actualizarJornada(ByVal idjornada As Integer, ByVal jornada As String, ByVal inicio As String, ByVal fin As String, ByVal color As String, ByVal id_att As Integer) As String
         Dim err As String
         If jornada = "" Then
             err = "Error: no se actualizó, es necesario capturar el puesto de empleado."
@@ -145,10 +116,11 @@ Public Class ctiCalendario
                 err = "Error: no se actualizó, ya existe este nombre."
             Else
                 rdr.Close()
-                cmd.CommandText = "UPDATE Jornada SET jornada = @jornada, inicio = @inicio, fin = @fin, color = @color WHERE idjornada = @idjornada"
+                cmd.CommandText = "UPDATE Jornada SET jornada = @jornada, inicio = @inicio, fin = @fin, color = @color, id_att = @id_att WHERE idjornada = @idjornada"
                 cmd.Parameters.AddWithValue("inicio", inicio)
                 cmd.Parameters.AddWithValue("fin", fin)
                 cmd.Parameters.AddWithValue("color", color)
+                cmd.Parameters.AddWithValue("id_att", id_att)
                 cmd.ExecuteNonQuery()
                 err = "Datos actualizados."
             End If
@@ -182,11 +154,13 @@ Public Class ctiCalendario
         dt.Columns.Add(New DataColumn("inicio", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("fin", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("color", System.Type.GetType("System.String")))
+        'dt.Columns.Add(New DataColumn("id_att", System.Type.GetType("System.Int32")))
+
 
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idjornada,jornada,inicio,fin,color FROM Jornada  ORDER BY jornada", dbC)
+        Dim cmd As New SqlCommand("SELECT idjornada,jornada,inicio,fin,color,id_att FROM Jornada  ORDER BY jornada", dbC)
         'cmd.Parameters.AddWithValue("idjornada", idjornada)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
@@ -196,14 +170,13 @@ Public Class ctiCalendario
             r(2) = rdr("inicio").ToString
             r(3) = rdr("fin").ToString
             r(4) = rdr("color").ToString
-
+            'r(5) = rdr("id_att").ToString
 
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-    'Partida Jornada
-    
+
 
 End Class
