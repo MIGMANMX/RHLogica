@@ -817,11 +817,12 @@ Public Class ctiCatalogos
     End Function
 
     'Partida/Jornada
-    Public Function datosPartidaJornada(ByVal idpartidas_jornada As Integer) As String()
+    Public Function datosPartidaJornada(ByVal idempleado As Integer, ByVal fecha As String) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,idempleado, idjornada, fecha FROM Partidas_Jornada WHERE idpartidas_jornada = @idpartidas_jornada", dbC)
-        cmd.Parameters.AddWithValue("idpartidas_jornada", idpartidas_jornada)
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,idempleado, idjornada, fecha FROM Partidas_Jornada WHERE idempleado=@idempleado and fecha=@fecha", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        cmd.Parameters.AddWithValue("fecha", fecha)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
