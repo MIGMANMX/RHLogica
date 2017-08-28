@@ -548,7 +548,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-
     Public Function clave_att() As String()
         Dim dbC As New SqlConnection(StarTconnStr)
         dbC.Open()
@@ -577,7 +576,7 @@ Public Class ctiCatalogos
                                     ByVal calle As String,
                                     ByVal numero As String,
                                     ByVal colonia As String,
-                                    ByVal cp As Integer,
+                                    ByVal cp As String,
                                     ByVal telefono As String,
                                     ByVal correo As String, ByVal idpuesto As Integer, ByVal clave_att As String) As String()
         Dim ae() As String
@@ -632,7 +631,7 @@ Public Class ctiCatalogos
                                         ByVal calle As String,
                                         ByVal numero As String,
                                         ByVal colonia As String,
-                                        ByVal cp As Integer,
+                                        ByVal cp As String,
                                         ByVal telefono As String,
                                         ByVal correo As String, ByVal clave_att As String) As String
         Dim aci As String
