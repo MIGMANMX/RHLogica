@@ -881,7 +881,7 @@ Public Class ctiCatalogos
         cmd.Parameters.AddWithValue("idpartidas_jornada", idpartidas_jornada)
         cmd.ExecuteNonQuery()
         cmd.Dispose() : dbC.Close() : dbC.Dispose()
-        Return "Usuario eliminado."
+        Return "Dia de trabajo eliminado."
     End Function
     Public Function gvPartida_Jornada(ByVal idempleado As Integer) As DataTable
         Dim dt As New DataTable
