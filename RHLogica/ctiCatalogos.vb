@@ -686,7 +686,7 @@ Public Class ctiCatalogos
                                         ByVal calle As String,
                                         ByVal numero As String,
                                         ByVal colonia As String,
-                                        ByVal cp As Integer,
+                                        ByVal cp As String,
                                         ByVal telefono As String,
                                         ByVal correo As String,
                                         ByVal fecha_baja As String, ByVal clave_att As String) As String
