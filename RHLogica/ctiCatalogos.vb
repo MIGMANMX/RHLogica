@@ -111,6 +111,118 @@ Public Class ctiCatalogos
         Return dt
     End Function
 
+    '''''DiaFestivo
+    Public Function datosDiaFestivo(ByVal idfestivos As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idfestivos, dia, fecha FROM Dia_Festivo WHERE idfestivos = @idfestivos", dbC)
+        cmd.Parameters.AddWithValue("idfestivos", idfestivos)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(1)
+            dsP(0) = rdr("dia").ToString
+            dsP(1) = rdr("fecha").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra este puesto de empleado."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarDiaFestivo(ByVal dia As String, ByVal fecha As String) As String()
+        Dim ans() As String
+        If dia <> "" And fecha <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT fecha FROM Dia_Festivo WHERE fecha = @fecha", dbC)
+            cmd.Parameters.AddWithValue("fecha", fecha)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe un dia registrado."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "INSERT INTO Dia_Festivo SELECT @dia,@fecha"
+                cmd.Parameters.AddWithValue("dia", dia)
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idfestivos FROM Dia_Festivo WHERE fecha = @fecha"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idfestivos").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarDiaFestivo(ByVal idfestivos As Integer,
+                                     ByVal dia As String, ByVal fecha As String) As String
+        Dim err As String
+        If fecha = "" And dia = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idfestivos FROM Dia_Festivo WHERE dia = @dia AND idfestivos <> @idfestivos", dbC)
+            cmd.Parameters.AddWithValue("idfestivos", idfestivos)
+            cmd.Parameters.AddWithValue("fecha", fecha)
+            cmd.Parameters.AddWithValue("dia", dia)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Dia_Festivo SET dia = @dia, fecha = @fecha WHERE idfestivos = @idfestivos"
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarDiaFestivo(ByVal idfestivos As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idfestivos FROM Dia_Festivo WHERE idfestivos = @idfestivos", dbC)
+        cmd.Parameters.AddWithValue("idfestivos", idfestivos)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim err As String
+        If rdr.HasRows Then
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Dia_Festivo WHERE idfestivos = @idfestivos"
+            cmd.ExecuteNonQuery()
+            err = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return err
+    End Function
+    Public Function gvDiaFestivo() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idfestivos", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("dia", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idfestivos, dia, fecha FROM Dia_Festivo ORDER BY fecha", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idfestivos").ToString : r(1) = rdr("dia").ToString : r(2) = rdr("fecha").ToString
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
+
     '''''Incidencias
     Public Function datosIncidencias(ByVal idincidencia As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
