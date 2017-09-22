@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ctiAdmin.vb" />
+    <Compile Include="ctiCalculo.vb" />
     <Compile Include="ctiCalendario.vb" />
     <Compile Include="ctiCatalogos.vb" />
     <Compile Include="ctiStarT.vb" />
