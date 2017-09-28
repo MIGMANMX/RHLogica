@@ -24,4 +24,26 @@ Public Class ctiCalculo
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
+    Public Function datosCalculo(ByVal idempleado As Integer, ByVal chec As Date) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idchequeo, chec, tipo FROM Chequeo Where chec ='" & chec & "'  AND idempleado=@idempleado   ORDER BY chec", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        cmd.Parameters.AddWithValue("chec", chec)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+
+            ReDim dsP(3)
+            dsP(0) = rdr("idchequeo").ToString
+            dsP(1) = rdr("chec").ToString
+            dsP(2) = rdr("tipo").ToString
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+
 End Class
