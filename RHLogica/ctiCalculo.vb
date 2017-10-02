@@ -5,7 +5,7 @@ Public Class ctiCalculo
     Public Function gvChequeo(ByVal idempleado As Integer, ByVal Fech1 As String, ByVal Fech2 As String) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("chec", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("tipo", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("tipo", System.Type.GetType("System.String")))
 
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
